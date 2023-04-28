@@ -1,5 +1,8 @@
+//Петр, скажешь когда сделать на экспорт, пока для проверки как обычно прописала
+
+
 //Класс Алерт
-export class Alert {
+ class Alert {
     constructor() {
         this.modal = document.createElement('div');
         this.modal.className = 'modal';
@@ -39,7 +42,7 @@ const alert = new Alert();
 alert.show('Привет, мир!');
   
 //Класс Промпт
-export class Prompt {
+ class Prompt {
     constructor() {
 
         this.result = '';
@@ -73,7 +76,7 @@ export class Prompt {
         okButton.addEventListener('click', () => {
         //В общем вергуть как в обычном промпте инпут не получается, поэтому получить его можно будет через this.result
         this.result = input.value;
-        console.log(inputValue);
+        console.log(this.result);
         this.hide();
         });
     
@@ -104,13 +107,14 @@ let tmp = prompt.show('Введите текст:')
 
 
 //Класс Автобуса
-export class Bus {
+ class Bus {
     constructor(speed) {
       this.speed = speed;
       this.route = [];
       this.currentStop = 0;
       this.passengers = 0;
       this.maxPassengers = 30;
+
     }
   
     // Метод для установки нового маршрута
@@ -119,11 +123,64 @@ export class Bus {
         this.currentStop = 0;
         this.passengers = 0;
     }
+  
+    // Метод для движения к следующей остановке
+    go() {
+    //Ну короче пока движение только до первой остановки(((
+
+      // Перемещаем автобус на расстояние до следующей остановки
+      let busElement = document.querySelector(".bus");
+      console.log(busElement.offsetWidth);
+      let road = document.querySelector(".road");
+
+      let roadLength = road.offsetWidth;
+      console.log(road.offsetWidth);
+      const distance = roadLength / this.route.length;
+      console.log(distance);
+    
+        let m = roadLength;
+        console.log(m);
+        roadLength -= distance;
+        console.log(roadLength);
+    
+        let timer = setInterval( () => {
+           m -= 30;
+          busElement.style.left = m + 'px';
+
+           console.log(m);
+           if(m < roadLength )clearInterval(timer);
+    
+        }, 200)
+      
+    }
+
+    getMessage(){
+      if (this.currentStop === this.route.length - 1) {
+        // Если автобус на конечной остановке, выходят все пассажиры
+        this.passengers = 0;
+        return "Автобус на конечной остановке, все пассажиры вышли";
+      }
+      
+      // Вычисляем расстояние до следующей остановки
+      const distanceToNextStop = this.route[this.currentStop];
+    
+      // Случайное количество пассажиров заходят и выходят
+      const exiting = Math.floor(Math.random() * (this.passengers + 1));
+      const boarding = Math.floor(Math.random() * 6);
+      this.passengers = Math.max(this.passengers - exiting, 0) + boarding;
+    
+      // Формируем сообщение
+      const message = `Остановка № ${this.currentStop + 1}: проехали ${distanceToNextStop} км за ${distanceToNextStop / this.speed * 60} минут. Вышли ${exiting} человек, зашли ${boarding}, текущее количество пассажиров: ${this.passengers}`;
+      
+      // Увеличиваем индекс текущей остановки и возвращаем сообщение
+      this.currentStop++;
+      return message;
+    }
 
 }
 
 //Класс Остановок
-export class StopList {
+class StopList {
     constructor(roadLength, numberOfStops) {
         this.route = [];
         // Получаю рандомные цифры и пушу их в роут, цикл зависит от колличества остановок
@@ -162,12 +219,4 @@ export class StopList {
 }
   
 //Пример для класса Остановок
-
 let stop = new StopList(document.querySelector('.road').offsetWidth - 80, 6);
-
-
-
-
-
-
-
