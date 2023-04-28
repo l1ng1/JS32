@@ -38,14 +38,12 @@ button {
     margin: 20px 50px;
 }
 
-.cancel button, .ok  button {
-	background: #404f89;
+.cancel,.ok{
+	background: #3c5de0;
     border: 2px solid #fff;
 }
-
-.ok{
-    background-color: #007bff;
-}
+#go{background-color: #5055a3d6;transition: all 0.35s;}
+#go:hover{background-color: #6970ced6;}
 
 /* Конец */
 
