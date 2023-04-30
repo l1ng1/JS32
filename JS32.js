@@ -38,8 +38,7 @@
 }
 
 //Пример для класса Алерт
-const alert = new Alert();
-alert.show('Привет, мир!');
+
   
 //Класс Промпт
  class Prompt {
@@ -75,11 +74,17 @@ alert.show('Привет, мир!');
         okButton.textContent = 'Ок';
         okButton.addEventListener('click', () => {
         //В общем вергуть как в обычном промпте инпут не получается, поэтому получить его можно будет через this.result
-        this.result = input.value;
-        console.log(this.result);
+        //пишу здесь тк не знаю как это сделать в другом месте
+        stops = input.value;
+        if(isNaN(stops)) return
+        
+        ss.createStops(stops);
+        let st = document.getElementById('go');
+        st.classList.remove('unactive');
+
         this.hide();
         });
-    
+
         const buttonContainer = document.createElement('div');
         buttonContainer.classList.add('button-container');
         buttonContainer.append(cancelButton);
@@ -102,8 +107,8 @@ alert.show('Привет, мир!');
 }
 
 //Пример для класса Prompt
-let prompt = new Prompt();
-let tmp = prompt.show('Введите текст:')
+// let prompt = new Prompt();
+// let tmp = prompt.show('Введите текст:');
 
 
 //Класс Автобуса
@@ -128,29 +133,41 @@ let tmp = prompt.show('Введите текст:')
     go() {
     //Ну короче пока движение только до первой остановки(((
 
-      // Перемещаем автобус на расстояние до следующей остановки
+    // Перемещаем автобус на расстояние до следующей остановки
       let busElement = document.querySelector(".bus");
-      console.log(busElement.offsetWidth);
-      let road = document.querySelector(".road");
+      let road = document.querySelector(".road").clientWidth;
+      //Мой вариант
+      let distance = road/quantytiOfStops;
+      for(let i =0;i<quantytiOfStops;i++){
+        let newPosition = Math.floor(busElement.getBoundingClientRect().left)-distance;
+        console.log(busElement.getBoundingClientRect().left);
+        busElement.style.left = newPosition +'px';
+      }
 
-      let roadLength = road.offsetWidth;
-      console.log(road.offsetWidth);
-      const distance = roadLength / this.route.length;
-      console.log(distance);
-    
-        let m = roadLength;
-        console.log(m);
-        roadLength -= distance;
-        console.log(roadLength);
-    
-        let timer = setInterval( () => {
-           m -= 30;
-          busElement.style.left = m + 'px';
 
-           console.log(m);
-           if(m < roadLength )clearInterval(timer);
+
+      //Это написала Гульжан
+      // console.log(busElement.offsetWidth);
+      
+
+      // let roadLength = road.offsetWidth;
+      // console.log(road.offsetWidth);
+      // const distance = roadLength / this.route.length;
+      // console.log(distance);
     
-        }, 200)
+      //   let m = roadLength;
+      //   console.log(m);
+      //   roadLength -= distance;
+      //   console.log(roadLength);
+    
+      //   let timer = setInterval(() => {
+      //      m -= 30;
+      //     busElement.style.left = m + 'px';
+
+      //      console.log(m);
+      //      if(m < roadLength )clearInterval(timer);
+    
+      //   }, 200)
       
     }
 
@@ -181,34 +198,35 @@ let tmp = prompt.show('Введите текст:')
 
 //Класс Остановок
 class StopList {
-    constructor(roadLength, numberOfStops) {
+    constructor(numberOfStops) {
         this.route = [];
         // Получаю рандомные цифры и пушу их в роут, цикл зависит от колличества остановок
-        for(let i=0; i<numberOfStops; i++){
-            let rundomNumber = (Math.random() * 4 + 1).toFixed(1);
-            this.route.push(rundomNumber);
-        }
+        // for(let i=0; i<numberOfStops; i++){
+        //     let rundomNumber = (Math.random() * 4 + 1).toFixed(1);
+        //     this.route.push(rundomNumber);
+        // }
 
         //Получаю узел дивов с остановками через метод this.createStops
-        this.nodes = this.createStops(roadLength, numberOfStops);
+        // this.nodes = this.createStops(roadLength, numberOfStops);
     }
     //Метод визуализации остановок
-    createStops(roadLength, numberOfStops) {
+    createStops(numberOfStops) {
+        quantytiOfStops =numberOfStops;
         //Получаю дистанцию междуостановками. Будет константа.
-        const distance = roadLength / numberOfStops;
+        // const distance = roadLength / numberOfStops;
         //Инициализирую массивчик, который будет возвращаться каждый раз в узел
         // если же тупо пушить в this.nodes то каждый раз надо удалять старые значения.
         let nodes = [];
-        for (let i = 0; i < numberOfStops; i++) {
+        for (let i = 0; i < numberOfStops-1; i++) {
             //Создаю дивчик с классом стоп и вставляю в него картинку
             let div = document.createElement('div');
             div.classList.add('stop');
             let imgSt = document.createElement('img');
             imgSt.src = "resources/bus-stop-icon.png";
-            div.append(imgSt)
+            div.append(imgSt);
 
             //Расставляю картинки с остановками по дороге
-            div.style.left = `${i  * distance}px`;
+            // div.style.left = `${i  * distance}px`;
             document.querySelector('.road').append(div);
             //Теперь добавляю в инициализированный заранее nodes
             nodes.push(div);
@@ -216,7 +234,12 @@ class StopList {
       //Возвращаю массив в this.nodes
       return nodes;
     }
+
+    clear(){
+      let road =document.getElementById('road');
+    }
+
 }
   
 //Пример для класса Остановок
-let stop = new StopList(document.querySelector('.road').offsetWidth - 80, 6);
+let quantytiOfStops =0;
